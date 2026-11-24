@@ -115,7 +115,10 @@ renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadow
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.xr.enabled = true; renderer.xr.setReferenceSpaceType('local-floor');   // y=0 = real floor in VR
 document.body.appendChild(renderer.domElement);
-document.getElementById('vrwrap').appendChild(VRButton.createButton(renderer));
+/* Only show the Enter VR button when immersive VR is really supported, so "VR NOT SUPPORTED" / "WEBXR NOT AVAILABLE" is never written on screen */
+if (navigator.xr && navigator.xr.isSessionSupported) {
+  navigator.xr.isSessionSupported('immersive-vr').then(ok => { if (ok) document.getElementById('vrwrap').appendChild(VRButton.createButton(renderer)); }).catch(() => {});
+}
 const scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0xa9dcff, .01); scene.background = new THREE.Color(0xa9dcff);
 const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, .05, 300);
 const rig = new THREE.Group(); rig.add(camera); scene.add(rig);   // we move the RIG; camera sits inside it
